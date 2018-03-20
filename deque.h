@@ -19,6 +19,17 @@ private:
     node *head;
     node *tail;
     int size = 0;
+private:
+    node *_at(int _index) {
+        if (_index < 0 && _index >= size) {
+            //TODO throw exception
+        }
+        node *current = head;
+        for (int i = 0; i < _index; i++)
+            current = current->next;
+        return current;
+    }
+
 
 public:
     void emplace_back(T _element) {
@@ -35,23 +46,93 @@ public:
         size++;
     }
 
-    void emplace_from(T);
+    void emplace_front(T _element) {
+        node *newNode = new node;
+        newNode->data = _element;
+        if (size == 0) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            head->previous = newNode;
+            newNode->next = head;
+            head = newNode;
+        }
+        size++;
+    }
 
-    void emplace(T, int);
+    void emplace(T _element, int _position) {
+        if (_position == 0) {
+            emplace_front(_element);
+        } else if (_position == size) {
+            emplace_back(_element);
+        } else if (_position > size || _position < 0) {
+            //TODO throw exception
+        } else {
+            node *newNode = new node;
+            newNode->data = _element;
+            node *previous = _at(_position - 1);
+            previous->next->previous = newNode;
+            previous->next = newNode;
+        }
+        size++;
+    }
 
-    void assign(T, int);
+    void assign(T _element, int _position) {
+        _at(_position)->data = _element;
+    }
 
-    void remove(int);
+    void remove(int _position) {
+        if (_position < 0 || _position >= size) {
+            //TODO throw exception
+        }
+        if (_position == 0) {
+            node *temp = head->next;
+            delete head;
+            temp->previous = nullptr;
+            head = temp;
+        } else if (_position == size - 1) {
+            node *temp = tail->previous;
+            delete tail;
+            temp->next = nullptr;
+            tail = temp;
+        } else {
+            node *previous = _at(_position - 1);
+            node *next = previous->next->next;
+            delete previous->next;
+            previous->next = next;
+            next->previous = previous;
+        }
+    }
 
-    T front();
+    T front() {
+        if (head == nullptr) {
+            //TODO throw exception
+        }
+        return head->data;
+    }
 
-    T back();
+    T back() {
+        if (tail == nullptr) {
+            //TODO throw exception
+        }
+        return tail->data;
+    }
 
-    T at(int);
+    T at(int _index) {
+        return _at(_index)->data;
+    }
 
-    T dequeu_front();
+    T dequeu_front() {
+        T data = front();
+        remove(0);
+        return data;
+    }
 
-    T dequeu_back();
+    T dequeu_back() {
+        T data = back();
+        remove(size - 1);
+        return data;
+    }
 
     class iterator : public std::iterator<
             std::output_iterator_tag,

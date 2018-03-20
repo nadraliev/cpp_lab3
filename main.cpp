@@ -9,6 +9,7 @@ int main() {
     d.emplace_back(1);
     d.emplace_back(2);
     d.emplace_back(3);
+    printf("%d\n", d.dequeu_back());
     for (deque<int>::reverse_iterator iter = d.rbegin(); iter != d.rend(); iter++) {
         printf("%d\n", *iter);
     }
